@@ -41,31 +41,3 @@ python run_pipeline.py
 3. Все — далі оновлюється саме, а вручну можна запустити кнопкою
    "Run workflow" на вкладці Actions
 
-## SQL-запити для Tableau / аналізу
-
-Кілька прикладів для таблиці `releases_by_genre_year`:
-
-```sql
--- Топ-5 жанрів за останній рік
-SELECT genre, game_count
-FROM releases_by_genre_year
-WHERE release_year = 2026
-ORDER BY game_count DESC
-LIMIT 5;
-
--- Динаміка жанру Indie по роках
-SELECT release_year, game_count
-FROM releases_by_genre_year
-WHERE genre = 'Indie'
-ORDER BY release_year;
-```
-
-Для `player_snapshots` — часові ряди онлайну по грі, для heatmap пікових годин/днів.
-
-## Що можна розширити далі
-
-- Додати `collect_releases_by_genre.py` у щотижневий запуск (зараз він
-  повільний через rate limit — краще запускати окремо раз на місяць)
-- Winsorize/очищення викидів у `owners_estimate` перед аналізом
-- Парсинг `results_html` у Store Search для отримання не лише кількості,
-  а й списку конкретних назв ігор по кожній комбінації жанр+рік
