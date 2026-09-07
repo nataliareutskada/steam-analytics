@@ -1,0 +1,33 @@
+name: Update Steam analytics data
+
+on:
+  schedule:
+    # Щопонеділка о 06:00 UTC (08:00/09:00 за Києвом залежно від DST)
+    - cron: "0 6 * * 1"
+  workflow_dispatch: {}  # дозволяє запускати вручну кнопкою в GitHub
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run data pipeline
+        run: python run_pipeline.py
+
+      - name: Commit updated database
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add db/steam_analytics.db
+          git diff --cached --quiet || git commit -m "Auto-update Steam data $(date -u +%Y-%m-%d)"
+          git push
